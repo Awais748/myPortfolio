@@ -8,17 +8,32 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middlewares
+const allowedOrigin = process.env.CLIENT_ORIGIN || "http://localhost:5173";
 app.use(
   cors({
-    origin: process.env.CLIENT_ORIGIN || "*",
+    origin: allowedOrigin === "*" ? "*" : allowedOrigin,
   })
 );
 app.use(express.json());
 
+// Helper for sanitizing inputs
+const sanitize = (text) => {
+  if (typeof text !== "string") return "";
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+};
+
+// Robust email regex (matching frontend)
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 // Rate limiting for /api routes
 const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 50, // limit each IP to 50 requests per window
+  windowMs: 15 * 60 * 1000, 
+  max: 30, // Tighter limit for audit fix
   standardHeaders: true,
   legacyHeaders: false,
 });
@@ -33,16 +48,21 @@ app.get("/health", (req, res) => {
 // Contact form endpoint
 app.post("/api/contact", async (req, res) => {
   try {
-    const { name, email, message } = req.body || {};
+    let { name, email, message } = req.body || {};
 
     if (!name || !email || !message) {
       return res.status(400).json({
         success: false,
-        message: "Please provide name, email and message.",
+        message: "Please fill in all fields.",
       });
     }
 
-    if (!email.includes("@") || !email.includes(".")) {
+    // Trim and sanitize
+    name = sanitize(name.trim());
+    email = email.trim();
+    message = sanitize(message.trim());
+
+    if (!EMAIL_REGEX.test(email)) {
       return res.status(400).json({
         success: false,
         message: "Please provide a valid email address.",
@@ -62,7 +82,7 @@ app.post("/api/contact", async (req, res) => {
       console.error("Missing SMTP environment variables");
       return res.status(500).json({
         success: false,
-        message: "Email service is not configured on the server.",
+        message: "Email service is temporarily unavailable.",
       });
     }
 

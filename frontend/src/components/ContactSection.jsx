@@ -1,8 +1,11 @@
 import { useState } from "react";
 import axios from "axios";
 import { Github, Linkedin, Mail, MapPin, Phone, Send } from "lucide-react";
-import { cn } from "@/lib/utlis";
+import { cn } from "@/lib/utils";
 import { toast } from "react-toastify";
+
+// Robust email regex for frontend validation
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function ContactSection() {
   const [formData, setFormData] = useState({
@@ -22,12 +25,12 @@ export default function ContactSection() {
 
     const { name, email, message } = formData;
 
-    if (!name || !email || !message) {
+    if (!name.trim() || !email.trim() || !message.trim()) {
       toast.error("Please fill in all fields.");
       return;
     }
 
-    if (!email.includes("@") || !email.includes(".")) {
+    if (!EMAIL_REGEX.test(email)) {
       toast.error("Please enter a valid email address.");
       return;
     }
@@ -198,7 +201,7 @@ export default function ContactSection() {
                   required
                   value={formData.name}
                   className="w-full px-4 py-2.5 sm:py-3 rounded-md border border-input bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-primary transition-colors text-sm sm:text-base"
-                  placeholder="Jon Snow"
+                  placeholder="Your Name"
                   onChange={handleChange}
                 />
               </div>

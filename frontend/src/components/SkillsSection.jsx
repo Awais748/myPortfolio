@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { cn } from "@/lib/utlis";
+import { cn } from "@/lib/utils";
 
 const MotionH2 = motion.h2;
 const MotionButton = motion.button;
