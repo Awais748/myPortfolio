@@ -104,24 +104,13 @@ export const Navbar = () => {
         className={cn(
           "fixed inset-0 z-[90] md:hidden flex flex-col items-center justify-center transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]",
           isMenuOpen
-            ? "opacity-100 visible"
-            : "opacity-0 invisible pointer-events-none"
+            ? "opacity-100 visible bg-background/98 backdrop-blur-3xl saturate-150"
+            : "opacity-0 invisible pointer-events-none bg-transparent"
         )}
-        style={{
-          backdropFilter: isMenuOpen ? "blur(60px) saturate(180%)" : "none",
-          WebkitBackdropFilter: isMenuOpen
-            ? "blur(60px) saturate(180%)"
-            : "none",
-        }}
       >
-        {/* Dynamic Background for Light/Dark Mode */}
-        <div className={cn(
-          "absolute inset-0 -z-20 transition-colors duration-700",
-          isMenuOpen ? "bg-white/70 dark:bg-zinc-950/80" : "bg-transparent"
-        )} />
-        {/* Subtle Background Glows matching Cosmic Theme */}
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/10 rounded-full blur-[120px] -z-10 animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-violet-500/10 rounded-full blur-[120px] -z-10 animate-pulse-slow" />
+        {/* Subtle Background Glows - Only for Dark Mode to keep Light Mode clean */}
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/20 rounded-full blur-[100px] -z-10 animate-pulse hidden dark:block" />
+        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-violet-500/20 rounded-full blur-[100px] -z-10 animate-pulse-slow hidden dark:block" />
 
         <div className="flex flex-col items-center gap-10">
           {navItems.map((item, index) => (
