@@ -11,12 +11,14 @@ const PORT = process.env.PORT || 5000;
 const allowedOrigin = process.env.CLIENT_ORIGIN || "http://localhost:5173";
 app.use(
   cors({
-    origin: allowedOrigin === "*" ? "*" : allowedOrigin,
+    origin: [
+      "http://localhost:5173",
+      "https://myportfolio-mu-six-53.vercel.app/",
+    ],
   })
 );
 app.use(express.json());
 
-// Helper for sanitizing inputs
 const sanitize = (text) => {
   if (typeof text !== "string") return "";
   return text
@@ -27,25 +29,21 @@ const sanitize = (text) => {
     .replace(/'/g, "&#039;");
 };
 
-// Robust email regex (matching frontend)
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// Rate limiting for /api routes
 const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, 
-  max: 30, // Tighter limit for audit fix
+  windowMs: 15 * 60 * 1000,
+  max: 30,
   standardHeaders: true,
   legacyHeaders: false,
 });
 
 app.use("/api/", apiLimiter);
 
-// Health check
 app.get("/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
-// Contact form endpoint
 app.post("/api/contact", async (req, res) => {
   try {
     let { name, email, message } = req.body || {};
@@ -57,7 +55,6 @@ app.post("/api/contact", async (req, res) => {
       });
     }
 
-    // Trim and sanitize
     name = sanitize(name.trim());
     email = email.trim();
     message = sanitize(message.trim());
@@ -69,14 +66,8 @@ app.post("/api/contact", async (req, res) => {
       });
     }
 
-    const {
-      SMTP_HOST,
-      SMTP_PORT,
-      SMTP_USER,
-      SMTP_PASS,
-      TO_EMAIL,
-      FROM_EMAIL,
-    } = process.env;
+    const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, TO_EMAIL, FROM_EMAIL } =
+      process.env;
 
     if (!SMTP_USER || !SMTP_PASS || !TO_EMAIL) {
       console.error("Missing SMTP environment variables");
@@ -96,7 +87,6 @@ app.post("/api/contact", async (req, res) => {
       },
     });
 
-    // 1) Email to you (owner)
     await transporter.sendMail({
       from: FROM_EMAIL || SMTP_USER,
       to: TO_EMAIL,
@@ -109,7 +99,6 @@ Message:
 ${message}`,
     });
 
-    // 2) Auto-response to user
     await transporter.sendMail({
       from: FROM_EMAIL || SMTP_USER,
       to: email,
@@ -142,4 +131,3 @@ app.listen(PORT, () => {
 });
 
 module.exports = app;
-
