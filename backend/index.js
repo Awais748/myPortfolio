@@ -7,12 +7,15 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-const allowedOrigin = process.env.CLIENT_ORIGIN || "http://localhost:5173";
 app.use(
   cors({
     origin: process.env.CLIENT_ORIGIN,
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type"],
   })
 );
+app.options("/{*splat}", cors());
+
 app.use(express.json());
 
 const sanitize = (text) => {
@@ -98,12 +101,12 @@ ${message}`,
     await transporter.sendMail({
       from: FROM_EMAIL || SMTP_USER,
       to: email,
-      subject: "I’ve received your message",
+      subject: "I've received your message",
       text: `Hi ${name},
 
 Thanks for getting in touch!
 Your message has been successfully received.
-I’ll respond soon after reviewing the details.
+I'll respond soon after reviewing the details.
 
 Regards,
 Awais`,
@@ -122,8 +125,10 @@ Awais`,
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Backend server running on port ${PORT}`);
-});
+if (process.env.NODE_ENV !== "production") {
+  app.listen(PORT, () => {
+    console.log(`Backend server running on port ${PORT}`);
+  });
+}
 
 module.exports = app;
