@@ -7,14 +7,10 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middlewares
 const allowedOrigin = process.env.CLIENT_ORIGIN || "http://localhost:5173";
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://myportfolio-mu-six-53.vercel.app/",
-    ],
+    origin: process.env.CLIENT_ORIGIN,
   })
 );
 app.use(express.json());
