@@ -85,51 +85,68 @@ app.post("/api/contact", contactLimiter, async (req, res) => {
   }
 
   try {
-    // 1. Tumhe notification
     await transporter.sendMail({
       from: `"Portfolio Contact" <${process.env.FROM_EMAIL}>`,
       to: process.env.TO_EMAIL,
       replyTo: email,
       subject: `New Contact: ${name.trim()}`,
       html: `
-        <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;padding:24px;border:1px solid #e2e8f0;border-radius:8px;">
-          <h2 style="color:#6366f1;margin-bottom:16px;">New Message from Portfolio</h2>
-          <table style="width:100%;border-collapse:collapse;">
-            <tr>
-              <td style="padding:8px 0;font-weight:bold;width:80px;color:#374151;">Name:</td>
-              <td style="padding:8px 0;color:#6b7280;">${name.trim()}</td>
-            </tr>
-            <tr>
-              <td style="padding:8px 0;font-weight:bold;color:#374151;">Email:</td>
-              <td style="padding:8px 0;"><a href="mailto:${email}" style="color:#6366f1;">${email}</a></td>
-            </tr>
-            <tr>
-              <td style="padding:8px 0;font-weight:bold;vertical-align:top;color:#374151;">Message:</td>
-              <td style="padding:8px 0;color:#6b7280;white-space:pre-wrap;">${message.trim()}</td>
-            </tr>
-          </table>
-          <p style="margin-top:24px;font-size:12px;color:#9ca3af;">Sent from your portfolio contact form</p>
-        </div>
-      `,
-    });
+<div style="max-width:600px;margin:auto;font-family:Arial,sans-serif;">
 
-    // 2. Sender ko auto-reply
-    await transporter.sendMail({
-      from: `"Awais Tariq" <${process.env.FROM_EMAIL}>`,
-      to: email,
-      subject: "Thanks for reaching out!",
-      html: `
-        <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;padding:24px;border:1px solid #e2e8f0;border-radius:8px;">
-          <h2 style="color:#6366f1;">Hey ${name.trim()}, thanks for your message!</h2>
-          <p style="color:#6b7280;line-height:1.6;">I've received your message and will get back to you as soon as possible, usually within 24-48 hours.</p>
-          <p style="color:#6b7280;line-height:1.6;">
-            In the meantime, feel free to check out my work on
-            <a href="https://github.com/Awais748" style="color:#6366f1;">GitHub</a> or connect on
-            <a href="https://www.linkedin.com/in/awais-tariq-9a2a45374" style="color:#6366f1;">LinkedIn</a>.
-          </p>
-          <p style="margin-top:24px;color:#374151;">— Awais Tariq</p>
-        </div>
-      `,
+  <div style="background:#ffffff;border-top:4px solid #6366f1;border-radius:8px 8px 0 0;padding:36px 36px 28px;border-left:1px solid #e5e7eb;border-right:1px solid #e5e7eb;">
+
+    <h2 style="color:#111827;font-size:20px;font-weight:700;margin:0 0 10px;">
+      Hi <span style="color:#6366f1;">${name.trim()}</span>, thanks for reaching out!
+    </h2>
+    <p style="color:#6b7280;font-size:15px;line-height:1.75;margin:0 0 24px;">
+      I've received your message and will personally reply within
+      <strong style="color:#374151;">24–48 hours</strong>.
+      Looking forward to connecting with you!
+    </p>
+
+    <div style="background:#f9fafb;border:1px solid #e5e7eb;border-left:3px solid #6366f1;border-radius:6px;padding:16px 18px;margin-bottom:28px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <p style="color:#9ca3af;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin:0;font-weight:600;">Your message</p>
+        <p style="color:#d1d5db;font-size:11px;margin:0;">
+          ${new Date().toLocaleDateString("en-US", {
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+          })}
+        </p>
+      </div>
+      <p style="color:#6b7280;font-size:14px;font-style:italic;margin:0;line-height:1.6;">
+        "${message.trim().slice(0, 150)}${
+        message.trim().length > 150 ? "..." : ""
+      }"
+      </p>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-bottom:32px;">
+      <a href="https://github.com/Awais748"
+        style="flex:1;background:#6366f1;color:#fff;text-decoration:none;text-align:center;padding:11px;border-radius:6px;font-size:13px;font-weight:600;display:block;">
+        GitHub
+      </a>
+      <a href="https://www.linkedin.com/in/awais-tariq-9a2a45374"
+        style="flex:1;background:#ffffff;color:#6366f1;text-decoration:none;text-align:center;padding:11px;border-radius:6px;font-size:13px;font-weight:600;border:1px solid #6366f1;display:block;">
+        LinkedIn
+      </a>
+    </div>
+
+    <div style="border-top:1px solid #f1f5f9;padding-top:20px;">
+      <p style="color:#9ca3af;font-size:13px;margin:0 0 2px;">Cheers,</p>
+      <p style="color:#111827;font-size:15px;font-weight:700;margin:0;">Awais Tariq</p>
+    </div>
+  </div>
+
+  <div style="background:#f9fafb;padding:14px 36px;border-radius:0 0 8px 8px;border:1px solid #e5e7eb;border-top:none;text-align:center;">
+    <p style="color:#d1d5db;font-size:11px;margin:0;">
+      You received this because you reached out via my portfolio. If this wasn't you, safely ignore this.
+    </p>
+  </div>
+
+</div>
+`,
     });
 
     return res
@@ -137,12 +154,10 @@ app.post("/api/contact", contactLimiter, async (req, res) => {
       .json({ success: true, message: "Message sent successfully!" });
   } catch (error) {
     console.error("Email send error:", error.message);
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: "Failed to send message. Please try again later.",
-      });
+    return res.status(500).json({
+      success: false,
+      message: "Failed to send message. Please try again later.",
+    });
   }
 });
 

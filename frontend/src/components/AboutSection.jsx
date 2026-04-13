@@ -47,15 +47,12 @@ export default function AboutSection() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 pt-6 justify-center md:justify-start">
-              <a
-                href="#contact"
-                className="cosmic-button"
-              >
+              <a href="#contact" className="cosmic-button">
                 Get in Touch
               </a>
 
               <a
-                href="/cv/Awais.cv.pdf"
+                href="/cv/Awais.Resume.pdf"
                 download
                 className="inline-flex items-center justify-center rounded-full border border-primary px-6 py-3 font-medium text-primary hover:bg-primary/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
@@ -80,7 +77,9 @@ export default function AboutSection() {
                   <Code className="h-6 w-6 sm:h-7 sm:w-7 text-primary" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-lg sm:text-xl mb-2">Full-Stack Skills</h4>
+                  <h4 className="font-semibold text-lg sm:text-xl mb-2">
+                    Full-Stack Skills
+                  </h4>
                   <p className="text-muted-foreground text-sm sm:text-base">
                     Building modern UIs with React and strong backend systems
                     using Node.js, Express & MongoDB.
@@ -103,7 +102,9 @@ export default function AboutSection() {
                   <User className="h-6 w-6 sm:h-7 sm:w-7 text-primary" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-lg sm:text-xl mb-2">Learning Mindset</h4>
+                  <h4 className="font-semibold text-lg sm:text-xl mb-2">
+                    Learning Mindset
+                  </h4>
                   <p className="text-muted-foreground text-sm sm:text-base">
                     Always improving, experimenting, and exploring new tools to
                     stay ahead in modern web development.
@@ -126,7 +127,9 @@ export default function AboutSection() {
                   <Briefcase className="h-6 w-6 sm:h-7 sm:w-7 text-primary" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-lg sm:text-xl mb-2">Projects</h4>
+                  <h4 className="font-semibold text-lg sm:text-xl mb-2">
+                    Projects
+                  </h4>
                   <p className="text-muted-foreground text-sm sm:text-base">
                     Worked on full-stack projects including authentication,
                     APIs, dashboards, and interactive UI designs.
