@@ -5,6 +5,9 @@ import { cn } from "@/lib/utils";
 import { toast } from "react-toastify";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const backendUrl = import.meta.env.VITE_BACKEND_URL.replace(/\/+$/, "");
+const MAX_NAME_LENGTH = 100;
+const MAX_MESSAGE_LENGTH = 2000;
 
 export default function ContactSection() {
   const [formData, setFormData] = useState({
@@ -34,13 +37,26 @@ export default function ContactSection() {
       return;
     }
 
+    if (name.trim().length > MAX_NAME_LENGTH) {
+      toast.error(`Name must be ${MAX_NAME_LENGTH} characters or fewer.`);
+      return;
+    }
+
+    if (message.trim().length > MAX_MESSAGE_LENGTH) {
+      toast.error(`Message must be ${MAX_MESSAGE_LENGTH} characters or fewer.`);
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
       const { data } = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/contact`,
+        `${backendUrl}/api/contact`,
         { name, email, message },
-        { headers: { "Content-Type": "application/json" } }
+        {
+          headers: { "Content-Type": "application/json" },
+          timeout: 15000,
+        }
       );
 
       if (data.success) {
@@ -161,6 +177,8 @@ export default function ContactSection() {
                   value={formData.name}
                   placeholder="Your Name"
                   onChange={handleChange}
+                  required
+                  maxLength={MAX_NAME_LENGTH}
                   className="w-full px-4 py-3 rounded-md border border-input bg-background focus:ring-2 focus:ring-primary outline-none"
                 />
               </div>
@@ -175,6 +193,7 @@ export default function ContactSection() {
                   value={formData.email}
                   placeholder="jonsnow@gmail.com"
                   onChange={handleChange}
+                  required
                   className="w-full px-4 py-3 rounded-md border border-input bg-background focus:ring-2 focus:ring-primary outline-none"
                 />
               </div>
@@ -189,6 +208,8 @@ export default function ContactSection() {
                   value={formData.message}
                   placeholder="Hello, I'd like to talk about..."
                   onChange={handleChange}
+                  required
+                  maxLength={MAX_MESSAGE_LENGTH}
                   className="w-full px-4 py-3 rounded-md border border-input bg-background focus:ring-2 focus:ring-primary outline-none resize-none"
                 />
               </div>
